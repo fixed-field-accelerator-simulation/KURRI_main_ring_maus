@@ -1,0 +1,60 @@
+Configuration ads
+{
+    Substitution $NumberOfCells 12 #ring number of cells
+    Substitution $Radius 4.835 #ring radius, metres 
+
+    Substitution $NumberOfVirtuals 12
+    Substitution $Virt_Start 0./12.*2*pi
+    Substitution $Virt_End 12./12.*2*pi
+
+    Dimensions 20.0 2.0 20.0 m
+    PropertyString Material Galactic
+
+    MiceModule ADSRing
+    {
+        PropertyString Volume Box
+        PropertyHep3Vector Position 0.0 0.0 0.0 m
+        PropertyHep3Vector Dimensions 12.0 1.0 12.0 m
+        MiceModule FieldMap
+        {
+            PropertyString Volume None
+            PropertyHep3Vector Rotation 0.0 0.+360.0/$NumberOfCells*@RepeatNumber 0.0 degree
+
+            PropertyString FieldType SectorMagneticFieldMap
+            PropertyString FileName  fieldmaps/TOSCA_cyli13_massaged.H
+            PropertyString FileType  tosca_sector_1
+            PropertyString Symmetry  Dipole
+            PropertyDouble Unit1     10. // cm
+            PropertyDouble Unit2     10. // cm
+            PropertyDouble Unit3     10. // cm
+            PropertyDouble Unit4     1e-7 // Gauss
+            PropertyDouble Unit5     1e-7 // Gauss
+            PropertyDouble Unit6     1e-7 // Gauss
+
+            PropertyDouble ScaleFactor -1
+            PropertyBool RepeatModule2 1
+            PropertyInt  NumberOfRepeats $NumberOfCells-1
+        }
+        MiceModule Virtuals
+        {
+            PropertyHep3Vector Position $Radius*cos(@RepeatNumber*($Virt_End-$Virt_Start)/$NumberOfVirtuals+$Virt_Start) 0.0 $Radius*sin(@RepeatNumber*($Virt_End-$Virt_Start)/$NumberOfVirtuals+$Virt_Start)-1e-9 m
+            PropertyHep3Vector Rotation 0.0 @RepeatNumber*($Virt_End-$Virt_Start)/$NumberOfVirtuals+$Virt_Start 0.0 radian
+            PropertyString Volume Cylinder
+            PropertyHep3Vector Dimensions 0.25 1e-3 -1 m
+            PropertyBool Invisible 0
+            PropertyDouble RedColour 0.5
+            PropertyDouble BlueColour 0.5
+            PropertyDouble GreenColour 0.0
+
+            PropertyString     SensitiveDetector Virtual
+            PropertyString     IndependentVariable u
+            PropertyDouble     RadialExtent 0.5 m
+
+            PropertyBool       RepeatModule2 True
+            PropertyInt        NumberOfRepeats $NumberOfVirtuals-1
+            PropertyBool       GlobalCoordinates   True
+            PropertyString     MultiplePasses      NewStation
+        }
+    }
+}
+
